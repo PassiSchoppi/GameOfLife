@@ -19,6 +19,7 @@ boolean randomBool() {
 }
 
 void drawMap() {
+  // draw the map with 10*10 squeres
   for(int x=0; x<mapSize; x++){
     for(int y=0; y<mapSize; y++){
       fill(0);
@@ -31,6 +32,7 @@ void drawMap() {
 }
 
 void randomizeMap() {
+  // randomize all cells in the map
   for(int x=0; x<mapSize; x++){
     for(int y=0; y<mapSize; y++){
       grid[x][y] = randomBool();
@@ -39,10 +41,12 @@ void randomizeMap() {
 }
 
 void updateMap() {
-  boolean[][] updatedGrid = new boolean[mapSize][mapSize];;
+  // new updated grid
+  boolean[][] updatedGrid = new boolean[mapSize][mapSize];
   boolean somethingChanged;
   somethingChanged = boolean(0);
   int numberOfLivingNeighbours;
+  // counting all living eighbours in following code
   for(int x=0; x<mapSize; x++){
     for(int y=0; y<mapSize; y++){
       numberOfLivingNeighbours = 0;
@@ -121,24 +125,30 @@ void updateMap() {
         }
       }
 
+      // rules
+      // if living cell and less then 2 neighbours
       if(grid[x][y] && (numberOfLivingNeighbours < 2)) {
         updatedGrid[x][y] = boolean(0);
         somethingChanged = boolean(1);
-      }else if (grid[x][y] && (numberOfLivingNeighbours > 3)) {
+      }
+      // if living cell and more then 3 neighbours
+      if (grid[x][y] && (numberOfLivingNeighbours > 3)) {
         updatedGrid[x][y] = boolean(0);
         somethingChanged = boolean(1);
-      }else if (!grid[x][y] == (numberOfLivingNeighbours == 3)) {
+      }
+      // if dead cell and exactly 3 neighbours
+      if (!grid[x][y] == (numberOfLivingNeighbours == 3)) {
         updatedGrid[x][y] = boolean(1);
         somethingChanged = boolean(1);
       }
     }
   }
+  // update the grid
   grid = updatedGrid;
-  if(!somethingChanged){
-    randomizeMap();
-  }
 }
 
 void mouseReleased() {
+  // if mouse releases
+  // randomize the map
   randomizeMap();
 }
