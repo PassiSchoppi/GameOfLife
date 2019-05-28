@@ -1,17 +1,19 @@
-int mapSize = 70;
+int mapSize = 50;
+int fieldSize = 10;
 boolean[][] grid = new boolean[mapSize][mapSize];;
 int x, y;
 
 void setup() {
-  size(700, 700);
-  frameRate(7);
+  size(500, 500);
+  // frameRate(2);
   randomizeMap();
 }
 
 void draw() {
   background(0);
-  updateMap();
   drawMap();
+  updateMap();
+  // drawCourser();
 }
 
 boolean randomBool() {
@@ -26,7 +28,7 @@ void drawMap() {
       if (grid[x][y]) {
         fill(255);
       }
-      rect(x*10, y*10, 10, 10);
+      rect(x*fieldSize, y*fieldSize, fieldSize, fieldSize);
     }
   }
 }
@@ -40,111 +42,75 @@ void randomizeMap() {
   }
 }
 
+int getNumberOfLivingNeighbours(int x, int y) {
+  int numberOfLivingNeighbours = 0;
+
+  // top
+  numberOfLivingNeighbours += int(grid[x][(y+mapSize-1)%(mapSize)]);
+  // bottom
+  numberOfLivingNeighbours += int(grid[x][(y+1)%(mapSize)]);
+  // left
+  numberOfLivingNeighbours += int(grid[(x+mapSize-1)%mapSize][y]);
+  // right
+  numberOfLivingNeighbours += int(grid[(x+1)%mapSize][y]);
+
+  // top left
+  numberOfLivingNeighbours += int(grid[(x+mapSize-1)%mapSize][(y+mapSize-1)%mapSize]);
+  // top right
+  numberOfLivingNeighbours += int(grid[(x+mapSize+1)%mapSize][(y+mapSize-1)%mapSize]);
+  // bottom left
+  numberOfLivingNeighbours += int(grid[(x+mapSize-1)%mapSize][(y+mapSize+1)%mapSize]);
+  // bottom right
+  numberOfLivingNeighbours += int(grid[(x+mapSize+1)%mapSize][(y+mapSize+1)%mapSize]);
+
+  return numberOfLivingNeighbours;
+}
+
 void updateMap() {
   // new updated grid
   boolean[][] updatedGrid = new boolean[mapSize][mapSize];
-  boolean somethingChanged;
-  somethingChanged = boolean(0);
   int numberOfLivingNeighbours;
   // counting all living eighbours in following code
   for(int x=0; x<mapSize; x++){
     for(int y=0; y<mapSize; y++){
-      numberOfLivingNeighbours = 0;
-
-      // top
-      if(y!=0){numberOfLivingNeighbours += int(grid[x][y-1]);}else{
-        numberOfLivingNeighbours += int(grid[x][mapSize-1]);
-      }
-      // bottom
-      if(y!=mapSize-1){numberOfLivingNeighbours += int(grid[x][y+1]);}else{
-        numberOfLivingNeighbours += int(grid[x][0]);
-      }
-      // left
-      if(x!=0){numberOfLivingNeighbours += int(grid[x-1][y]);}else{
-        numberOfLivingNeighbours += int(grid[mapSize-1][y]);
-      }
-      // right
-      if(x!=mapSize-1){numberOfLivingNeighbours += int(grid[x+1][y]);}else{
-        numberOfLivingNeighbours += int(grid[0][y]);
-      }
-
-      // top left
-      if (x==0) {
-        if (y==0) {
-          numberOfLivingNeighbours += int(grid[mapSize-1][mapSize-1]);
-        }else {
-          numberOfLivingNeighbours += int(grid[mapSize-1][y-1]);
-        }
-      }else {
-        if (y==0) {
-          numberOfLivingNeighbours += int(grid[x-1][mapSize-1]);
-        }else {
-          numberOfLivingNeighbours += int(grid[x-1][y-1]);
-        }
-      }
-      // top right
-      if (x==mapSize-1) {
-        if (y==0) {
-          numberOfLivingNeighbours += int(grid[0][mapSize-1]);
-        }else {
-          numberOfLivingNeighbours += int(grid[0][y-1]);
-        }
-      }else {
-        if (y==0) {
-          numberOfLivingNeighbours += int(grid[x+1][mapSize-1]);
-        }else {
-          numberOfLivingNeighbours += int(grid[x+1][y-1]);
-        }
-      }
-      // bottom left
-      if (x==0) {
-        if (y==mapSize-1) {
-          numberOfLivingNeighbours += int(grid[mapSize-1][0]);
-        }else {
-          numberOfLivingNeighbours += int(grid[mapSize-1][y+1]);
-        }
-      }else {
-        if (y==mapSize-1) {
-          numberOfLivingNeighbours += int(grid[x-1][0]);
-        }else {
-          numberOfLivingNeighbours += int(grid[x-1][y+1]);
-        }
-      }
-      // bottom right
-      if (x==mapSize-1) {
-        if (y==mapSize-1) {
-          numberOfLivingNeighbours += int(grid[0][0]);
-        }else {
-          numberOfLivingNeighbours += int(grid[0][y+1]);
-        }
-      }else {
-        if (y==mapSize-1) {
-          numberOfLivingNeighbours += int(grid[x+1][0]);
-        }else {
-          numberOfLivingNeighbours += int(grid[x+1][y+1]);
-        }
-      }
-
+      numberOfLivingNeighbours  = getNumberOfLivingNeighbours(x, y);
       // rules
       // if living cell and less then 2 neighbours
       if(grid[x][y] && (numberOfLivingNeighbours < 2)) {
         updatedGrid[x][y] = boolean(0);
-        somethingChanged = boolean(1);
       }
       // if living cell and more then 3 neighbours
       if (grid[x][y] && (numberOfLivingNeighbours > 3)) {
         updatedGrid[x][y] = boolean(0);
-        somethingChanged = boolean(1);
+      }
+      // if living cell and more exactly 2 or 3 neighbours
+      if (grid[x][y] && ((numberOfLivingNeighbours == 2) || (numberOfLivingNeighbours == 3))) {
+        updatedGrid[x][y] = boolean(1);
       }
       // if dead cell and exactly 3 neighbours
-      if (!grid[x][y] == (numberOfLivingNeighbours == 3)) {
+      if (!grid[x][y] && (numberOfLivingNeighbours == 3)) {
         updatedGrid[x][y] = boolean(1);
-        somethingChanged = boolean(1);
       }
     }
   }
   // update the grid
   grid = updatedGrid;
+}
+
+void drawCourser() {
+  int numberOfLivingNeighbours;
+  x = mouseX/fieldSize;
+  y = mouseY/fieldSize;
+  numberOfLivingNeighbours  = getNumberOfLivingNeighbours(x, y);
+  fill(0, 255, 0, 50);
+  rect((x)*fieldSize, ((y+mapSize-1)%(mapSize))*fieldSize, fieldSize, fieldSize);
+  rect((x)*fieldSize, ((y+1)%(mapSize))*fieldSize, fieldSize, fieldSize);
+  rect(((x+mapSize-1)%mapSize)*fieldSize, (y)*fieldSize, fieldSize, fieldSize);
+  rect(((x+1)%mapSize)*fieldSize, (y)*fieldSize, fieldSize, fieldSize);
+  rect(((x+mapSize-1)%mapSize)*fieldSize, ((y+mapSize-1)%mapSize)*fieldSize, fieldSize, fieldSize);
+  rect(((x+mapSize+1)%mapSize)*fieldSize, ((y+mapSize-1)%mapSize)*fieldSize, fieldSize, fieldSize);
+  rect(((x+mapSize-1)%mapSize)*fieldSize, ((y+mapSize+1)%mapSize)*fieldSize, fieldSize, fieldSize);
+  rect(((x+mapSize+1)%mapSize)*fieldSize, ((y+mapSize+1)%mapSize)*fieldSize, fieldSize, fieldSize);
 }
 
 void mouseReleased() {
