@@ -1,5 +1,5 @@
-int mapSize = 50;
-int fieldSize = 10;
+int mapSize = 100;
+int fieldSize = 5;
 boolean[][] grid = new boolean[mapSize][mapSize];;
 int x, y;
 
@@ -12,12 +12,14 @@ void setup() {
 void draw() {
   background(0);
   drawMap();
-  updateMap();
+  if (!keyPressed) {
+   updateMap(); 
+  }
   // drawCourser();
 }
 
 boolean randomBool() {
-  return random(1) > .5;
+  return random(1) > .9;
 }
 
 void drawMap() {
@@ -25,8 +27,10 @@ void drawMap() {
   for(int x=0; x<mapSize; x++){
     for(int y=0; y<mapSize; y++){
       fill(0);
+      stroke(0);
       if (grid[x][y]) {
         fill(255);
+        stroke(255);
       }
       rect(x*fieldSize, y*fieldSize, fieldSize, fieldSize);
     }
@@ -113,8 +117,13 @@ void drawCourser() {
   rect(((x+mapSize+1)%mapSize)*fieldSize, ((y+mapSize+1)%mapSize)*fieldSize, fieldSize, fieldSize);
 }
 
-void mouseReleased() {
+void mousePressed() {
   // if mouse releases
-  // randomize the map
-  randomizeMap();
+  x = mouseX/fieldSize;
+  y = mouseY/fieldSize;
+  int val = int(grid[x][y]);
+  grid[x][y] = boolean(0);
+  if(val == 0){
+    grid[x][y] = boolean(1);
+  }
 }
