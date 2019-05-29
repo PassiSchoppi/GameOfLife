@@ -13,7 +13,14 @@ void draw() {
   background(0);
   drawMap();
   if (!keyPressed) {
-   updateMap(); 
+    updateMap(); 
+  }else{
+    if(key=='r'){
+      randomizeMap();
+    }
+    if(key=='c'){
+      clearMap();
+    }
   }
   // drawCourser();
 }
@@ -42,6 +49,14 @@ void randomizeMap() {
   for(int x=0; x<mapSize; x++){
     for(int y=0; y<mapSize; y++){
       grid[x][y] = randomBool();
+    }
+  }
+}
+
+void clearMap() {
+  for(int x=0; x<mapSize; x++){
+    for(int y=0; y<mapSize; y++){
+      grid[x][y] = boolean(0);
     }
   }
 }
